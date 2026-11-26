@@ -1,0 +1,48 @@
+name: Build Windows
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+      
+concurrency:
+  group: build-windows
+  cancel-in-progress: true
+
+jobs:
+  build-win64:
+    if: github.repository == 'Fatec-SCS-Jogos/CandomBattle'
+    runs-on: [self-hosted, Windows, unreal]
+    timeout-minutes: 180
+    env:
+      UE_ROOT: C:\Program Files\Epic Games\UE_5.7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          clean: false
+          
+      - name: Remove previous output
+        shell: cmd
+        run: if exist Build rmdir /s /q Build
+        
+      - name: Build editor module
+        shell: cmd
+        run: call "%UE_ROOT%\Engine\Build\BatchFiles\Build.bat" CandomBattleEditor Win64 Development -Project="%GITHUB_WORKSPACE%\CandomBattle.uproject" -WaitMutex
+        
+      - name: BuildCookRun
+        shell: cmd
+        run: >
+          call "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun
+          -project="%GITHUB_WORKSPACE%\CandomBattle.uproject"
+          -platform=Win64 -clientconfig=Shipping
+          -build -cook -stage -pak -archive -prereqs -nodebuginfo
+          -archivedirectory="%GITHUB_WORKSPACE%\Build"
+          -noP4 -unattended -utf8output
+          
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CandomBattle-Win64-${{ github.run_number }}
+          path: Build/Windows
+          if-no-files-found: error
+          retention-days: 14

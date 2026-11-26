@@ -33,7 +33,7 @@ public:
 	int AttackPower = 1;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Speed = 300.f;
+	float Speed = 1000.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int MovementDirection = 1;
