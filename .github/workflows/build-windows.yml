@@ -17,7 +17,7 @@ jobs:
     env:
       UE_ROOT: C:\Program Files\Epic Games\UE_5.7
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           lfs: true
           clean: false
@@ -40,7 +40,7 @@ jobs:
           -archivedirectory="%GITHUB_WORKSPACE%\Build"
           -noP4 -unattended -utf8output
           
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: CandomBattle-Win64-${{ github.run_number }}
           path: Build/Windows
